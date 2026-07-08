@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<!--
+  TEMPLATE: Claims team FNOL notification
+  Placeholders use {{double_braces}} - substitute in n8n before sending.
+  Conditional blocks are marked with comments: delete the block in n8n
+  when the condition is false (or wrap in your templating logic).
+  Payload for the handler email: full transcript, AI call summary, call
+  sentiment (calm / angry / distressed), caller name, email, phone (+ source),
+  identity MATCH/NO MATCH, vulnerability flag + notes, REPUDIATION RISK + exclusion indicators + notification delay, suggested claim size (£)
+  and journey, peril, all captured fields, banners, outcome.
+  Subject line to use:
+    {{urgent_prefix}}FNOL: {{fnol_reference}} - {{peril}} - {{caller_name}} - {{outcome}}
+    where urgent_prefix = "URGENT - " when injury/vulnerability/AA flagged, else "".
+-->
+<body style="margin:0;padding:0;background:#f4f4f4;">
+  <div style="max-width:640px;margin:0 auto;background:#ffffff;font-family:Helvetica,Arial,sans-serif;">
+
+    <!-- Header -->
+    <div style="background:#0278ae;padding:24px 28px;">
+      <div style="color:#ffffff;font-size:26px;font-weight:800;letter-spacing:2px;">PARAGON</div>
+      <div style="color:#ffffff;font-size:11px;letter-spacing:4px;margin-top:4px;">SENSIBLE RISK MANAGEMENT</div>
+    </div>
+
+    <!-- CONDITIONAL: urgent banner - include only when injury, vulnerability or AA flagged -->
+    <div style="background:#b00020;color:#ffffff;padding:10px 28px;font-weight:700;font-size:14px;">
+      URGENT &mdash; {{urgent_reason}}
+    </div>
+    <!-- /CONDITIONAL -->
+
+    <!-- CONDITIONAL: identity banner - include only when identity_verified is false -->
+    <div style="background:#e6a700;color:#000000;padding:10px 28px;font-weight:700;font-size:14px;">
+      IDENTITY NOT VERIFIED &mdash; validate caller against policy records before any disclosure or payment
+    </div>
+    <!-- /CONDITIONAL -->
+
+    <!-- CONDITIONAL: crime reference banner - include only when crime_reference is "pending" -->
+    <div style="background:#e6a700;color:#000000;padding:10px 28px;font-weight:700;font-size:14px;">
+      CRIME REFERENCE PENDING &mdash; claim cannot progress until the police reference is provided
+    </div>
+    <!-- /CONDITIONAL -->
+
+    <!-- CONDITIONAL: repudiation-risk banner - include only when repudiation_risk is true -->
+    <div style="background:#8a2b12;color:#ffffff;padding:10px 28px;font-weight:700;font-size:14px;">
+      REPUDIATION RISK &mdash; exclusion / late-notification indicators captured; assess before proceeding
+    </div>
+    <!-- /CONDITIONAL -->
+
+    <div style="padding:28px;">
+      <h2 style="color:#0278ae;margin:0 0 4px;">New FNOL notification &mdash; conversion call required within one to two working days</h2>
+      <p style="margin:0 0 20px;color:#000;font-size:13px;">
+        Recorded by Claire (AI FNOL line) &mdash; call length {{call_duration}} &mdash; conversation {{conversation_id}}
+      </p>
+
+      <table style="border-collapse:collapse;width:100%;font-size:14px;">
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;white-space:nowrap;vertical-align:top;">FNOL reference</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{fnol_reference}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Outcome</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{outcome}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Caller</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{caller_name}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Call sentiment</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{call_sentiment}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Suggested claim size</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">&pound;{{estimated_value_gbp}} ({{journey_type}})</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Identity verified</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{identity_verified}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Postcode</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{insured_postcode}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Phone (confirmed for conversion call)</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{contact_phone}} ({{phone_source}})</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Email</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{contact_email}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Preferred contact</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{preferred_contact_method}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Date of loss</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{date_of_loss}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Peril</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{peril}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Incident (verbatim)</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{incident_description}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Peril question answers</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{peril_answers}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Damage</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{damage_description}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Estimated value</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">&pound;{{estimated_value_gbp}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Journey type</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{journey_type}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Ongoing</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{is_ongoing}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Injury reported</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{injury_reported}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Vulnerable customer</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{is_vulnerable}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Adjustments needed</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{vulnerability_notes}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Crime reference</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{crime_reference}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Alternative accommodation</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{alternative_accommodation}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Actions taken</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{actions_taken}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;font-weight:600;vertical-align:top;">Escalated</td><td style="padding:8px 12px;border-bottom:1px solid #e8e8e8;">{{escalated}}</td></tr>
+      </table>
+
+      <!-- CONDITIONAL: show only when repudiation_risk is true -->
+      <h3 style="color:#8a2b12;margin:24px 0 8px;">Repudiation risk &mdash; indicators to assess</h3>
+      <table style="border-collapse:collapse;width:100%;font-size:13px;background:#fdf3f0;border:1px solid #e6c3b8;border-radius:6px;">
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #eed7cf;font-weight:600;white-space:nowrap;vertical-align:top;">Indicators</td><td style="padding:8px 12px;border-bottom:1px solid #eed7cf;">{{exclusion_indicators}}</td></tr>
+        <tr><td style="padding:8px 12px;border-bottom:1px solid #eed7cf;font-weight:600;vertical-align:top;">Date of loss</td><td style="padding:8px 12px;border-bottom:1px solid #eed7cf;">{{date_of_loss}} (reported {{notification_delay_days}} days after loss)</td></tr>
+        <tr><td style="padding:8px 12px;font-weight:600;vertical-align:top;">Handler note</td><td style="padding:8px 12px;">Captured at FNOL by the AI for assessment. No coverage view has been expressed to the customer.</td></tr>
+      </table>
+      <!-- /CONDITIONAL -->
+
+      <h3 style="color:#0278ae;margin:24px 0 8px;">Call summary</h3>
+      <p style="margin:0;line-height:1.5;">{{transcript_summary}}</p>
+
+      <h3 style="color:#0278ae;margin:24px 0 8px;">Full transcript</h3>
+      <div style="font-size:13px;line-height:1.55;color:#000;white-space:pre-wrap;background:#f7f9fc;border:1px solid #e8e8e8;border-radius:8px;padding:14px 16px;">{{full_transcript}}</div>
+    </div>
+
+    <!-- Footer: MGA-facing wording -->
+    <div style="background:#000000;color:#ffffff;padding:16px 28px;font-size:11px;line-height:1.5;">
+      Paragon Car Limited is authorised and regulated by the Financial Conduct Authority. FRN 312028.<br>
+      Internal claims notification &mdash; contains personal data. Handle in line with the data protection policy.
+    </div>
+  </div>
+</body>
+</html>
